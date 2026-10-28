@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070b10">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>请别在雨天离开</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- 标题页 -->
+  <section class="screen active" id="screen-title">
+    <div class="aurora-layer" aria-hidden="true"></div>
+    <canvas id="title-rain" aria-hidden="true"></canvas>
+    <div class="mist-layer" aria-hidden="true"></div>
+    <div class="title-beam" aria-hidden="true"></div>
+    <div class="title-motes" id="title-motes" aria-hidden="true"></div>
+    <!-- 封面立绘：雨中的她（通关后换成释怀表情） -->
+    <div class="title-portrait" aria-hidden="true">
+      <span class="tp-halo"></span>
+      <img id="title-portrait-img" src="assets/char/lin.png" alt="">
+      <span class="tp-fade"></span>
+    </div>
+    <div class="title-frame" aria-hidden="true"></div>
+    <div class="title-wrap">
+      <div class="title-main">
+        <!-- 点缀：倾斜的雨伞剪影（纯 SVG，随呼吸轻摆） -->
+        <svg class="title-deco" viewBox="0 0 96 76" aria-hidden="true" focusable="false">
+          <path d="M48 12 C30 12 16 24 14 40 C14 42 15 43 17 42.6 C25 39.5 34 38.2 44 38 L44 60 C44 64 47 67 51 67 C55 67 58 64 58 60.5 C58 59.4 57 58.6 56 58.6 C55 58.6 54 59.4 54 60.5 C54 62.4 52.8 63.5 51 63.5 C49.2 63.5 48 62.2 48 60 L48 38 C58 38.2 67 39.5 75 42.6 C77 43 78 42 78 40 C80 24 66 12 48 12 Z"
+                fill="none" stroke="#8fb6d9" stroke-width="2.4" stroke-linejoin="round" opacity="0.9"/>
+          <path d="M48 6 L48 13" stroke="#8fb6d9" stroke-width="2.4" stroke-linecap="round" opacity="0.9"/>
+          <path d="M24 40 C28 31 37 24 48 24 C59 24 68 31 72 40" fill="none" stroke="#dca7b4" stroke-width="1.6" opacity="0.55"/>
+        </svg>
+        <p class="kicker">单女主 · 救赎向视觉小说</p>
+        <h1>请别在雨天离开</h1>
+        <span class="title-en">Don't Leave on a Rainy Day</span>
+        <p class="subtitle" id="title-sub">雨停之前，先别走</p>
+        <nav class="title-menu" aria-label="主菜单">
+          <button class="menu-btn" type="button" data-action="new">开始游戏</button>
+          <button class="menu-btn" type="button" data-action="continue">继续游戏</button>
+          <button class="menu-btn memory" type="button" data-action="memory" id="btn-memory" hidden>回忆 · 那个雨天之前</button>
+          <button class="menu-btn" type="button" data-action="gallery">结局图鉴</button>
+          <button class="menu-btn" type="button" data-action="settings">设置</button>
+        </nav>
+        <p class="help-note">如果你或身边的人正经历难以承受的时刻，请联系当地心理援助热线（中国大陆：12356）。</p>
+        <p class="title-hint" id="title-hint" aria-hidden="true">雨停之前，请别离开</p>
+      </div>
+    </div>
+    <div class="title-seal" aria-hidden="true"><span>雨</span><small>RAIN</small></div>
+    <div class="title-footer" aria-hidden="true">
+      <span>PROLOGUE — CHAPTER III</span><i></i><span>全 3 章 · 3 结局</span>
+    </div>
+  </section>
+
+  <!-- 游戏页 -->
+  <section class="screen" id="screen-game">
+    <div class="stage" id="stage">
+      <div class="stage-bg" id="stage-bg" aria-hidden="true"></div>
+      <div class="scene-tint" id="scene-tint" aria-hidden="true"></div>
+      <canvas id="scene-rain" aria-hidden="true"></canvas>
+      <div class="rain-layer" aria-hidden="true"></div>
+      <div class="joy-beam" id="joy-beam" aria-hidden="true"></div>
+      <div class="portrait-layer" id="portrait-layer" aria-hidden="true">
+        <img id="portrait-img" src="" alt="">
+      </div>
+      <div class="portrait-layer slot-left" id="portrait-layer-b" aria-hidden="true">
+        <img id="portrait-img-b" src="" alt="">
+      </div>
+      <div class="emotion-veil" id="emotion-veil" aria-hidden="true"></div>
+      <div class="scene-tag" id="scene-tag">
+        <span class="st-kicker" id="scene-kicker"></span>
+        <span class="st-title" id="scene-title"></span>
+      </div>
+
+      <!-- 心境 UI：伞的意象反映信任/压力 -->
+      <div class="bond-hud" id="bond-hud" aria-live="polite">
+        <span class="bond-icon" id="bond-icon" aria-hidden="true">
+          <svg viewBox="0 0 96 76" focusable="false">
+            <path class="bond-umb" d="M48 12 C30 12 16 24 14 40 C14 42 15 43 17 42.6 C25 39.5 34 38.2 44 38 L44 60 C44 64 47 67 51 67 C55 67 58 64 58 60.5 C58 59.4 57 58.6 56 58.6 C55 58.6 54 59.4 54 60.5 C54 62.4 52.8 63.5 51 63.5 C49.2 63.5 48 62.2 48 60 L48 38 C58 38.2 67 39.5 75 42.6 C77 43 78 42 78 40 C80 24 66 12 48 12 Z"/>
+            <path class="bond-crack" d="M34 18 L42 30 L36 38" fill="none" stroke-linecap="round"/>
+            <path class="bond-crack" d="M58 16 L52 28 L60 37" fill="none" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="bond-text" id="bond-text"></span>
+        <span class="bond-float" id="bond-float" aria-hidden="true"></span>
+      </div>
+      <div class="pressure-veil" id="pressure-veil" aria-hidden="true"></div>
+      <div class="stage-grain" aria-hidden="true"></div>
+    </div>
+
+    <!-- 章节黑场过渡 -->
+    <div class="chapter-card" id="chapter-card" hidden aria-hidden="true">
+      <p class="chapter-kicker" id="chapter-kicker"></p>
+      <h2 class="chapter-title" id="chapter-title"></h2>
+    </div>
+
+    <button class="phone-fab" id="phone-fab" type="button" hidden aria-label="查看短信">
+      短信<span class="phone-badge" id="phone-badge" hidden>1</span>
+    </button>
+
+    <div class="dialogue-area">
+      <div class="choice-box" id="choice-box" hidden></div>
+      <!-- 对话上方的「观察」按钮（须在 dialogue-area 内，top:-44px 才能浮在对话框上方） -->
+      <button class="inspect-fab" id="inspect-fab" type="button" hidden aria-label="观察">🔍 观察</button>
+      <div class="dialogue-box" id="dialogue-box">
+        <div class="speaker" id="speaker" hidden></div>
+        <p class="line" id="line"></p>
+        <div class="next-indicator" id="next-indicator" hidden aria-hidden="true">▼</div>
+      </div>
+      <!-- 快捷菜单栏 -->
+      <div class="quickbar" id="quickbar">
+        <button class="qbtn" id="btn-auto" type="button" aria-pressed="false">自动</button>
+        <button class="qbtn" id="btn-skip" type="button" aria-pressed="false">快进</button>
+        <button class="qbtn" id="btn-history" type="button">历史</button>
+        <button class="qbtn" id="btn-saves" type="button">存档</button>
+        <button class="qbtn" id="btn-loads" type="button">读档</button>
+        <button class="qbtn" id="btn-settings" type="button">设置</button>
+        <button class="qbtn" id="btn-hide" type="button">隐藏</button>
+        <button class="qbtn danger" id="btn-title" type="button">标题</button>
+      </div>
+    </div>
+
+    <!-- 观察模式 -->
+    <div class="observe-layer" id="observe-layer" hidden>
+      <button class="hotspot" id="observe-hotspot" type="button" aria-label="观察这个位置"></button>
+      <p class="observe-hint" id="observe-hint">点击画面里微微发亮的地方</p>
+    </div>
+
+    <!-- inspect 情绪观察：先点🔍，再点脉冲光圈 -->
+    <div class="inspect-layer" id="inspect-layer" hidden>
+      <div class="inspect-veil" aria-hidden="true"></div>
+      <button class="inspect-ring" id="inspect-ring" type="button" aria-label="观察这个细节"></button>
+    </div>
+
+    <!-- 点击波纹层 -->
+    <div class="ripple-layer" id="ripple-layer" aria-hidden="true"></div>
+
+    <!-- 调试面板（按 D 切换） -->
+    <div class="debug-panel" id="debug-panel" hidden>
+      <p class="dbg-head">DEBUG · D 关闭</p>
+      <p>信任值 <b id="dbg-trust">0</b></p>
+      <p>压力值 <b id="dbg-pressure">0</b></p>
+      <p>观察点 <b id="dbg-notes">0 / 0</b></p>
+      <p class="dbg-list" id="dbg-note-list"></p>
+      <p class="dbg-sub" id="dbg-cursor"></p>
+    </div>
+  </section>
+
+  <!-- 观察笔记 -->
+  <div class="overlay" id="overlay-note" hidden>
+    <div class="panel note-panel" role="dialog" aria-modal="true" aria-labelledby="note-title">
+      <p class="note-kicker" id="note-kicker">NOTE</p>
+      <h2 id="note-title"></h2>
+      <p id="note-text"></p>
+      <button class="menu-btn" id="btn-note-close" type="button">收进笔记</button>
+    </div>
+  </div>
+
+  <!-- 手机短信 -->
+  <div class="overlay" id="overlay-phone" hidden>
+    <div class="panel phone-panel" role="dialog" aria-modal="true" aria-labelledby="phone-name">
+      <div class="phone-status">
+        <span id="phone-clock">--:--</span>
+        <span>雨 · 4G</span>
+      </div>
+      <div class="phone-head">
+        <div>
+          <p class="phone-name" id="phone-name">林晚</p>
+          <span class="phone-sub">短信</span>
+        </div>
+        <button class="icon-btn" type="button" data-close aria-label="关闭">×</button>
+      </div>
+      <div class="chat-list" id="chat-list"></div>
+      <div class="phone-replies" id="phone-replies"></div>
+      <p class="phone-hint" id="phone-hint">对方暂时没有新的消息。</p>
+    </div>
+  </div>
+
+  <!-- 历史回看 -->
+  <div class="overlay" id="overlay-history" hidden>
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="history-title">
+      <div class="panel-head">
+        <h2 id="history-title">历史记录</h2>
+        <button class="icon-btn" type="button" data-close aria-label="关闭">×</button>
+      </div>
+      <div class="history-list" id="history-list"></div>
+      <p class="panel-note">历史只用于回看，无法改变已经做出的选择。</p>
+    </div>
+  </div>
+
+  <!-- 存档 / 读档 -->
+  <div class="overlay" id="overlay-saves" hidden>
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="saves-title">
+      <div class="panel-head">
+        <h2 id="saves-title">存档 / 读档</h2>
+        <button class="icon-btn" type="button" data-close aria-label="关闭">×</button>
+      </div>
+      <div class="slot-list" id="slot-list"></div>
+      <p class="panel-note">自动存档会在每次出现新台词时更新；3 个手动存档位保存在本机浏览器中。</p>
+    </div>
+  </div>
+
+  <!-- 设置 -->
+  <div class="overlay" id="overlay-settings" hidden>
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <div class="panel-head">
+        <h2 id="settings-title">设置</h2>
+        <button class="icon-btn" type="button" data-close aria-label="关闭">×</button>
+      </div>
+      <label class="setting-row">
+        <span>文字速度</span>
+        <output id="out-speed">5</output>
+        <input type="range" id="set-speed" min="1" max="10" step="1" value="5">
+      </label>
+      <label class="setting-row">
+        <span>自动播放间隔</span>
+        <output id="out-auto">1.4 秒</output>
+        <input type="range" id="set-auto" min="600" max="3000" step="100" value="1400">
+      </label>
+      <label class="setting-row">
+        <span>音效音量</span>
+        <output id="out-volume">55</output>
+        <input type="range" id="set-volume" min="0" max="100" step="1" value="55">
+      </label>
+      <label class="setting-row">
+        <span>音乐音量</span>
+        <output id="out-bgm-volume">60</output>
+        <input type="range" id="set-bgm-volume" min="0" max="100" step="1" value="60">
+      </label>
+      <label class="setting-row">
+        <span>环境音量</span>
+        <output id="out-ambient-volume">60</output>
+        <input type="range" id="set-ambient-volume" min="0" max="100" step="1" value="60">
+      </label>
+      <p class="panel-note">BGM、环境音与音效全部由实时合成生成，无任何本地音频文件；设备不支持音频时会自动保持静音。</p>
+    </div>
+  </div>
+
+  <!-- 确认框（返回标题等） -->
+  <div class="overlay" id="overlay-confirm" hidden>
+    <div class="panel confirm-panel" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+      <h2 id="confirm-title">返回标题</h2>
+      <p id="confirm-text">确定要返回标题吗？</p>
+      <div class="confirm-actions">
+        <button class="menu-btn" id="btn-confirm-cancel" type="button">取消</button>
+        <button class="menu-btn danger" id="btn-confirm-ok" type="button">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 结局图鉴 -->
+  <div class="overlay" id="overlay-gallery" hidden>
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="gallery-title">
+      <div class="panel-head">
+        <h2 id="gallery-title">结局图鉴</h2>
+        <button class="icon-btn" type="button" data-close aria-label="关闭">×</button>
+      </div>
+      <div class="gallery-grid" id="gallery-grid"></div>
+      <p class="panel-note" id="gallery-count"></p>
+    </div>
+  </div>
+
+  <!-- 试玩结束 -->
+  <div class="overlay" id="overlay-end" hidden>
+    <div class="panel end-panel" role="dialog" aria-modal="true" aria-labelledby="end-title">
+      <p class="end-kicker" id="end-kicker">DEMO END</p>
+      <h2 id="end-title">试玩结束</h2>
+      <p id="end-text"></p>
+      <p class="end-epilogue" id="end-epilogue" hidden></p>
+      <p class="end-gallery" id="end-gallery" hidden></p>
+      <div class="share-row">
+        <button class="btn-share" type="button" id="btn-share-snap">生成回忆截图</button>
+        <button class="btn-share" type="button" data-action="gallery">查看图鉴</button>
+      </div>
+      <p class="help-note">如果你或身边的人正经历难以承受的时刻，请联系当地心理援助热线（中国大陆：12356）。</p>
+      <button class="menu-btn" type="button" data-action="to-title">返回标题</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden role="status"></div>
+<canvas id="share-snapshot" width="1080" height="1440" aria-hidden="true"></canvas>
+</div>
+
+<script src="data/story.js"></script>
+<script src="script.js"></script>
+</body>
